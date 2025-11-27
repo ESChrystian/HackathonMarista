@@ -16,20 +16,14 @@ h1, h2 {
     width: 100%;
 }
 
-.top-info {
-    background-color: var(--primari);
-    color: #fff;
-    padding: 15px;
-    text-align: center;
-}
 
 .status-box {
     position: fixed;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background: #fff;
-    color: #111;
+    background: var(--primari);
+    color: var(--BG);
     padding: 12px 15px;
     border-radius: 12px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
