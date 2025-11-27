@@ -1,0 +1,32 @@
+@import url();
+
+:root{
+    --BG: #f3f0d1;
+    --primari: #A20E0E;
+    --secundari: #C85108;
+    --terceari: #E29C68;
+
+    --font-primary:Helvetica
+}
+
+body{
+    background-color: var(--BG);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.main{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mapa img {
+    width: 50%;
+}
+#mapa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
