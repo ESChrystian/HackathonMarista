@@ -182,4 +182,4 @@ const locais = [
     // redireciona para a página de navegação (substitua o caminho se necessário)
     window.location.href = "/src/pages/navegacao.html";
   });
-  
+

@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar Simples</title>
+    <title>Mapa Interativo</title>
     <link rel="stylesheet" href="/src/styles/index.css">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
+
 <body>
+    <section class="tittle">
+        <h1>Selecione sua região de turismo desejada</h1>
+    </section>
+    <div class="screen">
 
-    <nav>
-        <div class="logo">
-            <img src="" alt="Imagem logo">
+        <div class="left-panel" id="leftPanel">
+            <img id="previewImage" src="" alt="">
+            <p>
+
+            </p>
+            <a href="/src/pages/locais.html">
+                <!-- From Uiverse.io by kleenpulse -->
+                <button class="btn">Ver Pontos Turísticos</button>
+
+            </a>
         </div>
 
-        <ul id="menu">
-        </ul>
+        <div class="map-container">
 
-        <div class="menu-btn" id="btn">
-            <div></div><div></div><div></div>
+            <!-- Mapa completo -->
+            <img src="/public/images/mapa completo 1.png" class="map-base">
+
+            <!-- Área clicável da região norte -->
+            <div id="hitboxNorte" class="hitbox"></div>
+
         </div>
-    </nav>
 
-    <main class="main">
+    </div>
 
-        <section id="mapa">
-            <div class="partes">
-                <img src="/public/images/norte.png" alt="">
-            </div>
-            
-            <img src="/public/images/mapa completo 1.png" alt="">
-        </section>
-    </main>
-
-    <script src="/src/scripts/nav.js"></script>
-
+    <script src="/src/scripts/expandir.js"></script>
 </body>
+
 </html>
