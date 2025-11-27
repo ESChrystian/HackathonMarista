@@ -3,7 +3,6 @@
     --primari: #A20E0E;
     --secundari: #C85108;
     --terceari: #E29C68;
-
     --font-primary:Helvetica;
 }
 
@@ -15,7 +14,6 @@ h1, h2 {
     height: 92vh;
     width: 100%;
 }
-
 
 .status-box {
     position: fixed;
@@ -32,6 +30,11 @@ h1, h2 {
     width: 90%;
     max-width: 380px;
     z-index: 1000;
+}
+
+.status-box .header h3 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
 }
 
 .status-box .title {
@@ -88,6 +91,12 @@ h1, h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.point-item:hover {
+    background-color: #f9f9f9;
 }
 
 .point-item:last-child {
@@ -147,4 +156,57 @@ h1, h2 {
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
+}
+
+.focus-btn {
+    position: fixed;
+    bottom: 70px;
+    left: 10px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.focus-btn:hover, .toggle-modal-btn:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+}
+
+.focus-options {
+    position: fixed;
+    bottom: 130px;
+    left: 10px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    width: 200px;
+    z-index: 1000;
+    font-family: Arial;
+    display: none;
+    padding: 10px;
+}
+
+.focus-option {
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: background-color 0.2s;
+}
+
+.focus-option:hover {
+    background-color: #f0f0f0;
+}
+
+.focus-option:last-child {
+    margin-bottom: 0;
 }

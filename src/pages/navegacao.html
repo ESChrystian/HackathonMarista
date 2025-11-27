@@ -5,7 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roteiro Inteligente - Navegação</title>
 
-    <link rel="stylesheet" href="/src/styles/nav.css">
+    <style>
+        :root{
+            --BG: #f3f0d1;
+            --primari: #A20E0E;
+            --secundari: #C85108;
+            --terceari: #E29C68;
+            --font-primary:Helvetica;
+        }
+
+        h1, h2 {
+            font-family: var(--font-primary);
+        }
+
+        #map {
+            height: 92vh;
+            width: 100%;
+        }
+
+        .status-box {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primari);
+            color: var(--BG);
+            padding: 12px 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            font-family: Arial;
+            font-size: 0.95rem;
+            width: 90%;
+            max-width: 380px;
+            z-index: 1000;
+        }
+
+        .status-box .header h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .status-box .title {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        /* Modal de pontos selecionados */
+        .points-modal {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            font-family: Arial;
+            display: none;
+        }
+
+        .points-modal-header {
+            padding: 12px 15px;
+            background: #f5f5f5;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .points-modal-title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .points-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .points-list {
+            padding: 10px 0;
+        }
+
+        .point-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .point-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .point-item:last-child {
+            border-bottom: none;
+        }
+
+        .point-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .point-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .point-distance {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .point-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-current {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .toggle-modal-btn {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .focus-btn {
+            position: fixed;
+            bottom: 70px;
+            left: 10px;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .focus-btn:hover, .toggle-modal-btn:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+
+        .focus-options {
+            position: fixed;
+            bottom: 130px;
+            left: 10px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            width: 200px;
+            z-index: 1000;
+            font-family: Arial;
+            display: none;
+            padding: 10px;
+        }
+
+        .focus-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .focus-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .focus-option:last-child {
+            margin-bottom: 0;
+        }
+    </style>
 
     <!-- Leaflet Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -30,6 +243,16 @@
 
     <!-- Botão para abrir/fechar o modal -->
     <button class="toggle-modal-btn" id="toggleModalBtn">📋</button>
+
+    <!-- Botão para focar nos pontos -->
+    <button class="focus-btn" id="focusBtn">🔍</button>
+
+    <!-- Opções de foco -->
+    <div class="focus-options" id="focusOptions">
+        <div class="focus-option" id="focusNext">Focar no Próximo Ponto</div>
+        <div class="focus-option" id="focusAll">Focar em Todos os Pontos</div>
+        <div class="focus-option" id="focusUser">Focar na Minha Localização</div>
+    </div>
 
     <!-- Modal de pontos selecionados -->
     <div class="points-modal" id="pointsModal">
@@ -58,6 +281,11 @@
         const pointsModal = document.getElementById("pointsModal");
         const closeModalBtn = document.getElementById("closeModalBtn");
         const pointsList = document.getElementById("pointsList");
+        const focusBtn = document.getElementById("focusBtn");
+        const focusOptions = document.getElementById("focusOptions");
+        const focusNext = document.getElementById("focusNext");
+        const focusAll = document.getElementById("focusAll");
+        const focusUser = document.getElementById("focusUser");
 
         // Criar mapa
         const map = L.map('map').setView([-23.31, -51.17], 14);
@@ -157,6 +385,40 @@
         atualizarDestino();
 
         // ------------------------------
+        // FUNÇÕES DE FOCO
+        // ------------------------------
+        function focarNoProximoPonto() {
+            if (atual < locais.length) {
+                const destino = locais[atual];
+                map.setView([destino.lat, destino.lng], 16);
+                markers[atual].openPopup();
+            }
+        }
+
+        function focarEmTodosPontos() {
+            if (locais.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        function focarNaMinhaLocalizacao() {
+            if (userLat && userLng) {
+                map.setView([userLat, userLng], 16);
+            } else {
+                alert("Localização não disponível ainda.");
+            }
+        }
+
+        function focarNoPontoEspecifico(index) {
+            if (index >= 0 && index < locais.length) {
+                const local = locais[index];
+                map.setView([local.lat, local.lng], 16);
+                markers[index].openPopup();
+            }
+        }
+
+        // ------------------------------
         // MODAL DE PONTOS SELECIONADOS
         // ------------------------------
         function atualizarModalPontos() {
@@ -165,6 +427,7 @@
             locais.forEach((local, index) => {
                 const pointItem = document.createElement('div');
                 pointItem.className = 'point-item';
+                pointItem.dataset.index = index;
                 
                 const pointInfo = document.createElement('div');
                 pointInfo.className = 'point-info';
@@ -205,6 +468,12 @@
                 pointItem.appendChild(pointInfo);
                 pointItem.appendChild(pointStatus);
                 pointsList.appendChild(pointItem);
+
+                // Adicionar evento de clique para focar no ponto específico
+                pointItem.addEventListener('click', () => {
+                    focarNoPontoEspecifico(index);
+                    pointsModal.style.display = 'none';
+                });
             });
         }
 
@@ -232,6 +501,39 @@
         });
 
         // ------------------------------
+        // CONTROLE DO FOCO
+        // ------------------------------
+        focusBtn.addEventListener('click', () => {
+            if (focusOptions.style.display === 'block') {
+                focusOptions.style.display = 'none';
+            } else {
+                focusOptions.style.display = 'block';
+            }
+        });
+
+        focusNext.addEventListener('click', () => {
+            focarNoProximoPonto();
+            focusOptions.style.display = 'none';
+        });
+
+        focusAll.addEventListener('click', () => {
+            focarEmTodosPontos();
+            focusOptions.style.display = 'none';
+        });
+
+        focusUser.addEventListener('click', () => {
+            focarNaMinhaLocalizacao();
+            focusOptions.style.display = 'none';
+        });
+
+        // Fechar opções de foco ao clicar fora
+        document.addEventListener('click', (event) => {
+            if (!focusOptions.contains(event.target) && event.target !== focusBtn) {
+                focusOptions.style.display = 'none';
+            }
+        });
+
+        // ------------------------------
         // RASTREAMENTO DO USUÁRIO
         // ------------------------------
         let userMarker = null;
@@ -247,8 +549,6 @@
             } else {
                 userMarker.setLatLng([userLat, userLng]);
             }
-
-            map.setView([userLat, userLng]);
 
             // Ordena os locais somente na primeira localização
             if (primeiraLocalizacao) {
