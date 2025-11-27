@@ -22,7 +22,7 @@
   }
   
   /* MAP BACKGROUND */
-  #map-bg{
+  #map-bg {
     position:fixed;
     inset:0;
     z-index:0;
@@ -206,6 +206,4 @@
     .card{min-height:300px}
     .loader{width:64px;height:64px}
   }
-
-  
   

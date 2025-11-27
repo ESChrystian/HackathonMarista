@@ -1,5 +1,5 @@
 // Pegando locais selecionados
-const locais = JSON.parse(localStorage.getItem("selecionados")) || [];
+let locais = JSON.parse(localStorage.getItem("selecionados")) || [];
 
 let atual = 0; // índice do ponto atual
 let concluídos = [];
@@ -29,13 +29,70 @@ const iconUser = L.icon({
 });
 
 // Criar marcadores dos destinos
-const markers = locais.map(loc => {
+let markers = locais.map(loc => {
     return L.marker([loc.lat, loc.lng], { icon: iconDestino })
         .addTo(map)
         .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}`);
 });
 
-// Marcar "próximo destino"
+// ------------------------------
+// FUNÇÕES DE DISTÂNCIA
+// ------------------------------
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI/180;
+    const dLon = (lon2 - lon1) * Math.PI/180;
+
+    const a =
+        Math.sin(dLat/2) ** 2 +
+        Math.cos(lat1 * Math.PI/180) *
+        Math.cos(lat2 * Math.PI/180) *
+        Math.sin(dLon/2) ** 2;
+
+    return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))) * 1000; // metros
+}
+
+// Ordenar locais pela distância do usuário
+function ordenarLocais(lat, lng) {
+    locais.sort((a, b) => {
+        const distA = getDistance(lat, lng, a.lat, a.lng);
+        const distB = getDistance(lat, lng, b.lat, b.lng);
+        return distA - distB;
+    });
+
+    // Atualizar marcadores conforme nova ordem
+    markers.forEach(m => map.removeLayer(m));
+    markers = locais.map(loc =>
+        L.marker([loc.lat, loc.lng], { icon: iconDestino })
+            .addTo(map)
+            .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}`)
+    );
+
+    // Após ordenar, desenhar rota
+}
+
+// ------------------------------
+// DESENHAR ROTA ENTRE OS LOCAIS
+// ------------------------------
+let rotaPolyline = null;
+
+function desenharRota() {
+    if (rotaPolyline) map.removeLayer(rotaPolyline);
+
+    const coords = locais.map(l => [l.lat, l.lng]);
+
+    rotaPolyline = L.polyline(coords, {
+        color: "blue",
+        weight: 6,
+        opacity: 0.7
+    }).addTo(map);
+
+    map.fitBounds(rotaPolyline.getBounds());
+}
+
+// ------------------------------
+// DESTINO ATUAL
+// ------------------------------
 function atualizarDestino() {
     if (atual >= locais.length) {
         destinoAtualEl.textContent = "Todos os locais concluídos! 🎉";
@@ -47,29 +104,17 @@ function atualizarDestino() {
 }
 atualizarDestino();
 
-// Cálculo da distância
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI/180;
-    const dLon = (lon2 - lon1) * Math.PI/180;
-    const a =
-        Math.sin(dLat/2)**2 +
-        Math.cos(lat1 * Math.PI/180) *
-        Math.cos(lat2 * Math.PI/180) *
-        Math.sin(dLon/2)**2;
-
-    return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))) * 1000; // metros
-}
-
-// Marcação do usuário
+// ------------------------------
+// RASTREAMENTO DO USUÁRIO
+// ------------------------------
 let userMarker = null;
+let primeiraLocalizacao = true;
 
-// Rastrear localização em tempo real
 navigator.geolocation.watchPosition(pos => {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    // Atualizar posição do usuário no mapa
+    // Atualizar posição do usuário
     if (!userMarker) {
         userMarker = L.marker([lat, lng], { icon: iconUser }).addTo(map);
     } else {
@@ -78,20 +123,26 @@ navigator.geolocation.watchPosition(pos => {
 
     map.setView([lat, lng]);
 
-    // Calcular distância do destino atual
+    // Ordena os locais somente na primeira localização
+    if (primeiraLocalizacao) {
+        ordenarLocais(lat, lng);
+        primeiraLocalizacao = false;
+    }
+
+    // Distância para o próximo ponto
     const destino = locais[atual];
     const dist = getDistance(lat, lng, destino.lat, destino.lng);
 
     distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
 
-    // Se estiver a menos de 80 metros, marcar como concluído
+    // Se estiver perto, concluir
     if (dist < 80) {
         markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
         concluídos.push(destino);
         atual++;
         atualizarDestino();
 
-        // mini animação GSAP
+        // Efeito visual
         gsap.fromTo(statusBox, { scale: 1 }, { scale: 1.08, duration: 0.3, yoyo: true, repeat: 1 });
     }
 
