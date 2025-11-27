@@ -1,9 +1,9 @@
 // == Dados dos locais ==
 const locais = [
-    { nome: "Lago Igapó", descricao: "Cartão postal de Londrina, ótimo para caminhadas.", lat: -23.3103, lng: -51.1628, img: "https://source.unsplash.com/collection/190727/800x600?lake" },
-    { nome: "Zerão (Arthur Thomas)", descricao: "Parque ecológico com trilhas naturais.", lat: -23.3192, lng: -51.1954, img: "https://source.unsplash.com/featured/?forest,londrina" },
-    { nome: "Jardim Botânico", descricao: "Natureza preservada e lindos cenários.", lat: -23.3445, lng: -51.1923, img: "https://source.unsplash.com/featured/?garden" },
-    { nome: "Marco Zero", descricao: "Ponto central oficial da cidade.", lat: -23.3055, lng: -51.1691, img: "https://source.unsplash.com/featured/?city" }
+    { nome: "Lago do Cabrina", descricao: "Cartão postal de Londrina, ótimo para caminhadas.", lat: -23.3103, lng: -51.1628, img: "https://source.unsplash.com/collection/190727/800x600?lake" },
+    { nome: "Sorvete Italiano ZN", descricao: "Parque ecológico com trilhas naturais.", lat: -23.3192, lng: -51.1954, img: "https://source.unsplash.com/featured/?forest,londrina" },
+    { nome: "Centro Cultural", descricao: "Natureza preservada e lindos cenários.", lat: -23.3445, lng: -51.1923, img: "https://source.unsplash.com/featured/?garden" },
+    { nome: "Centro esportivo do Maria Cecília", descricao: "Ponto central oficial da cidade.", lat: -23.3055, lng: -51.1691, img: "https://source.unsplash.com/featured/?city" }
   ];
   
   const container = document.getElementById("cards-container");
