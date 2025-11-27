@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Descubra Londrina — Seleção de Locais</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/styles/style.css">
+
+  <!-- Leaflet (map background) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Vanilla Tilt (tilt 3D) -->
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+</head>
+<body>
+  <!-- MAP BACKGROUND (interactive but blurred) -->
+  <div id="map-bg" aria-hidden="true"></div>
+
+  <!-- Top floating bar -->
+  <header class="topbar">
+    <div class="brand">
+      <h1>Descubra Londrina</h1>
+      <p class="subtitle">Selecione locais e gere seu roteiro inteligente</p>
+    </div>
+    <div class="selection-status" id="selectionStatus">0 locais selecionados</div>
+  </header>
+
+  <!-- Main grid -->
+  <main class="wrap">
+    <section id="cards-container" class="grid"></section>
+
+    <div class="actions">
+      <button id="confirm" class="confirm-btn" aria-live="polite">
+        Confirmar seleção &nbsp;→
+      </button>
+    </div>
+  </main>
+
+  <!-- full screen overlay animation on confirm -->
+  <div id="overlay" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="loader"></div>
+      <p>Gerando seu roteiro inteligente...</p>
+    </div>
+  </div>
+
+  <!-- App script -->
+  <script src="/src/scripts/script.js" defer></script>
+</body>
+</html>
