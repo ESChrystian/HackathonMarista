@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roteiro Inteligente - Navegação</title>
+    <title>Descubra Londrina - Navegação</title>
 
     <style>
         :root{
@@ -14,209 +14,295 @@
             --font-primary:Helvetica;
         }
 
-        h1, h2 {
-            font-family: var(--font-primary);
-        }
-
         #map {
-            height: 92vh;
+            height: 100vh;
             width: 100%;
         }
 
         .status-box {
             position: fixed;
-            bottom: 10px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--primari);
             color: var(--BG);
-            padding: 12px 15px;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             font-family: Arial;
-            font-size: 0.95rem;
+            font-size: 1rem;
             width: 90%;
-            max-width: 380px;
+            max-width: 400px;
             z-index: 1000;
         }
 
+        .status-box .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .status-box .header h3 {
-            margin: 0 0 8px 0;
-            font-size: 1rem;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .route-progress {
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
 
         .status-box .title {
             font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        /* Modal de pontos selecionados */
-        .points-modal {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1000;
-            font-family: Arial;
-            display: none;
-        }
-
-        .points-modal-header {
-            padding: 12px 15px;
-            background: #f5f5f5;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        .points-modal-title {
-            font-weight: bold;
+            margin-bottom: 8px;
             font-size: 1rem;
         }
 
-        .points-modal-close {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .points-list {
-            padding: 10px 0;
-        }
-
-        .point-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .point-item:hover {
-            background-color: #f9f9f9;
-        }
-
-        .point-item:last-child {
-            border-bottom: none;
-        }
-
-        .point-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .point-name {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .point-distance {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .point-status {
-            font-size: 0.8rem;
-            padding: 3px 8px;
+        .progress-container {
+            margin-top: 12px;
+            background: rgba(255,255,255,0.3);
             border-radius: 10px;
-            font-weight: bold;
+            height: 8px;
+            overflow: hidden;
         }
 
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
+        .progress-bar {
+            height: 100%;
+            background: var(--BG);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
         }
 
-        .status-completed {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .status-current {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .toggle-modal-btn {
+        /* REORGANIZAÇÃO: Route info panel movido para a direita */
+        .route-info-panel {
             position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-        }
-
-        .focus-btn {
-            position: fixed;
-            bottom: 70px;
-            left: 10px;
-            background: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-        }
-
-        .focus-btn:hover, .toggle-modal-btn:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s;
-        }
-
-        .focus-options {
-            position: fixed;
-            bottom: 130px;
-            left: 10px;
-            background: #fff;
+            top: 20px;
+            right: 20px; /* Mudado para direita */
+            background: white;
+            padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             z-index: 1000;
             font-family: Arial;
-            display: none;
-            padding: 10px;
+            max-width: 280px;
         }
 
-        .focus-option {
+        .route-info-panel h3 {
+            margin: 0 0 10px 0;
+            color: var(--primari);
+            font-size: 1.1rem;
+        }
+
+        .route-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--primari);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .bonus-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
             padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #856404;
+            text-align: center;
+        }
+
+        /* REORGANIZAÇÃO: Controles principais na esquerda */
+        .main-controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* Controles de rota - agora parte dos controles principais */
+        .route-controls {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 160px;
+        }
+
+        .route-controls button {
+            background: var(--primari);
+            color: white;
+            border: none;
+            padding: 10px 12px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .route-controls button:hover {
+            background: var(--secundari);
+        }
+
+        /* Controles de navegação */
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn {
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .completion-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 2000;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            display: none;
+        }
+
+        .completion-modal h2 {
+            color: var(--primari);
+            margin-bottom: 15px;
+        }
+
+        .rewards {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .reward-item {
+            text-align: center;
+        }
+
+        .reward-icon {
+            font-size: 2rem;
             margin-bottom: 5px;
-            transition: background-color 0.2s;
         }
 
-        .focus-option:hover {
-            background-color: #f0f0f0;
+        .completion-modal button {
+            background: var(--primari);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
         }
 
-        .focus-option:last-child {
-            margin-bottom: 0;
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1999;
+            display: none;
+        }
+
+        /* Indicador de rota ativa */
+        .route-active {
+            border-left: 4px solid var(--primari);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .main-controls {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .route-controls {
+                flex: 1;
+                min-width: auto;
+            }
+            
+            .nav-controls {
+                flex: 1;
+                justify-content: space-around;
+            }
+            
+            .route-info-panel {
+                top: auto;
+                bottom: 80px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 
@@ -229,362 +315,422 @@
 </head>
 
 <body>
-
     <div id="map"></div>
 
+    <!-- REORGANIZADO: Todos os controles na esquerda -->
+    <div class="main-controls">
+        <!-- Controles de rota -->
+        <div class="route-controls" id="routeControls">
+            <button id="btnRouteNext">📍 Rota para Próximo</button>
+            <button id="btnRouteAll">🔄 Rota Completa</button>
+            <button id="btnClearRoutes">❌ Limpar Rotas</button>
+        </div>
+
+        <!-- Controles de navegação -->
+        <div class="nav-controls">
+            <button class="control-btn" id="btnMyLocation" title="Minha localização">📍</button>
+            <button class="control-btn" id="btnRouteView" title="Ver todos os pontos">👁️</button>
+            <button class="control-btn" id="btnNextPoint" title="Próximo ponto">➡️</button>
+        </div>
+    </div>
+
+    <!-- Painel de informações da rota - agora na direita -->
+    <div class="route-info-panel" id="routeInfo">
+        <h3 id="routeName">Carregando rota...</h3>
+        <div class="route-stats">
+            <div class="stat">
+                <div class="stat-value" id="statProgress">0%</div>
+                <div class="stat-label">Concluído</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statPoints">0/0</div>
+                <div class="stat-label">Pontos</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statDistance">-- km</div>
+                <div class="stat-label">Distância</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statTime">--</div>
+                <div class="stat-label">Tempo</div>
+            </div>
+        </div>
+        <div class="bonus-notice">
+            🎁 Complete a rota para desbloquear recompensas!
+        </div>
+    </div>
+
+    <!-- Status Box -->
     <div class="status-box" id="statusBox">
         <div class="header">
-            <h3>Navegação Turística na Região Norte</h3>
+            <h3>Navegando: <span id="currentRouteName">-</span></h3>
+            <div class="route-progress" id="routeProgress">0/0 pontos</div>
         </div>
         <div class="title">Próximo destino:</div>
         <div id="destinoAtual">Carregando...</div>
         <small id="distanciaAtual"></small>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
     </div>
 
-    <!-- Botão para abrir/fechar o modal -->
-    <button class="toggle-modal-btn" id="toggleModalBtn">📋</button>
-
-    <!-- Botão para focar nos pontos -->
-    <button class="focus-btn" id="focusBtn">🔍</button>
-
-    <!-- Opções de foco -->
-    <div class="focus-options" id="focusOptions">
-        <div class="focus-option" id="focusNext">Focar no Próximo Ponto</div>
-        <div class="focus-option" id="focusAll">Focar em Todos os Pontos</div>
-        <div class="focus-option" id="focusUser">Focar na Minha Localização</div>
+    <!-- Modal de conclusão -->
+    <div class="overlay" id="overlay"></div>
+    <div class="completion-modal" id="completionModal">
+        <h2>🎉 Rota Concluída! 🎉</h2>
+        <p>Parabéns! Você completou <span id="completedRouteName"></span> com sucesso!</p>
+        <div class="rewards">
+            <div class="reward-item">
+                <div class="reward-icon">🏆</div>
+                <div>Trofeu Virtual</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">📸</div>
+                <div>Foto Exclusiva</div>
+            </div>
+        </div>
+        <p>Mostre esta tela para resgatar descontos especiais!</p>
+        <button id="btnCloseModal">Continuar Explorando</button>
     </div>
 
-    <!-- Modal de pontos selecionados -->
-    <div class="points-modal" id="pointsModal">
-        <div class="points-modal-header">
-            <div class="points-modal-title">Pontos Selecionados</div>
-            <button class="points-modal-close" id="closeModalBtn">&times;</button>
-        </div>
-        <div class="points-list" id="pointsList">
-            <!-- Os pontos serão inseridos aqui dinamicamente -->
-        </div>
+    <div class="loading-indicator" id="loadingIndicator">
+        Calculando rota...
     </div>
 
     <script>
-        // Pegando locais selecionados
-        let locais = JSON.parse(localStorage.getItem("selecionados")) || [];
+        // Carregar rota selecionada
+        const rotaSelecionada = JSON.parse(localStorage.getItem("rotaSelecionada"));
+        
+        // Se não houver rota selecionada, usar os locais originais como fallback
+        const locais = rotaSelecionada ? rotaSelecionada.locais : [
+            { 
+                nome: "Lago do Cabrina", 
+                descricao: "Cartão postal de Londrina, ótimo para caminhadas.", 
+                lat: -23.269128522844692, 
+                lng: -51.1487427778922
+            },
+            { 
+                nome: "Sorvete Italiano ZN", 
+                descricao: "Os melhores sorvetes artesanais da cidade.", 
+                lat: -23.258567511423728,  
+                lng: -51.14835159087403
+            },
+            { 
+                nome: "Centro Cultural", 
+                descricao: "Exposições e eventos culturais diversos.", 
+                lat: -23.258247188716833, 
+                lng: -51.14500494963125
+            },
+            { 
+                nome: "Delika", 
+                descricao: "Culinária contemporânea em ambiente sofisticado.", 
+                lat: -23.259513800830575,  
+                lng: -51.145391187723135
+            }
+        ];
 
-        let atual = 0; // índice do ponto atual
-        let concluídos = [];
+        let atual = 0;
+        let concluidos = [];
         let userLat = null;
         let userLng = null;
+        let currentRoute = null;
+        let isRouteActive = false;
 
+        // Elementos da interface
         const statusBox = document.getElementById("statusBox");
         const destinoAtualEl = document.getElementById("destinoAtual");
         const distanciaAtualEl = document.getElementById("distanciaAtual");
-        const toggleModalBtn = document.getElementById("toggleModalBtn");
-        const pointsModal = document.getElementById("pointsModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
-        const pointsList = document.getElementById("pointsList");
-        const focusBtn = document.getElementById("focusBtn");
-        const focusOptions = document.getElementById("focusOptions");
-        const focusNext = document.getElementById("focusNext");
-        const focusAll = document.getElementById("focusAll");
-        const focusUser = document.getElementById("focusUser");
+        const progressBar = document.getElementById("progressBar");
+        const routeNameEl = document.getElementById("routeName");
+        const currentRouteNameEl = document.getElementById("currentRouteName");
+        const routeProgressEl = document.getElementById("routeProgress");
+        const statProgressEl = document.getElementById("statProgress");
+        const statPointsEl = document.getElementById("statPoints");
+        const statDistanceEl = document.getElementById("statDistance");
+        const statTimeEl = document.getElementById("statTime");
+        const completedRouteNameEl = document.getElementById("completedRouteName");
+        const completionModal = document.getElementById("completionModal");
+        const overlay = document.getElementById("overlay");
+        const btnCloseModal = document.getElementById("btnCloseModal");
+        const btnMyLocation = document.getElementById("btnMyLocation");
+        const btnRouteView = document.getElementById("btnRouteView");
+        const btnNextPoint = document.getElementById("btnNextPoint");
+        const btnRouteNext = document.getElementById("btnRouteNext");
+        const btnRouteAll = document.getElementById("btnRouteAll");
+        const btnClearRoutes = document.getElementById("btnClearRoutes");
+        const loadingIndicator = document.getElementById("loadingIndicator");
+        const routeControls = document.getElementById("routeControls");
+
+        // Inicializar informações da rota
+        if (rotaSelecionada) {
+            routeNameEl.textContent = rotaSelecionada.nome;
+            currentRouteNameEl.textContent = rotaSelecionada.nome;
+            statDistanceEl.textContent = rotaSelecionada.distancia;
+            statTimeEl.textContent = rotaSelecionada.duracao;
+            completedRouteNameEl.textContent = rotaSelecionada.nome;
+        } else {
+            routeNameEl.textContent = "Rota Zona Norte";
+            currentRouteNameEl.textContent = "Zona Norte";
+            statDistanceEl.textContent = "2.5 km";
+            statTimeEl.textContent = "3-4 horas";
+            completedRouteNameEl.textContent = "Rota Zona Norte";
+        }
 
         // Criar mapa
         const map = L.map('map').setView([-23.31, -51.17], 14);
-
-        // Camada do mapa
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19
         }).addTo(map);
 
-        // Ícone personalizado tipo Uber
+        // Ícones
         const iconDestino = L.icon({
             iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-            iconSize: [40, 40]
+            iconSize: [35, 35]
         });
 
-        // Ícone usuário
+        const iconConcluido = L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
+            iconSize: [30, 30]
+        });
+
         const iconUser = L.icon({
             iconUrl: "https://cdn-icons-png.flaticon.com/512/428/428933.png",
             iconSize: [40, 40]
         });
 
-        // Criar marcadores dos destinos
-        let markers = locais.map(loc => {
-            return L.marker([loc.lat, loc.lng], { icon: iconDestino })
-                .addTo(map)
-                .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}`);
+        // Criar marcadores
+        let markers = locais.map((loc, index) => {
+            return L.marker([loc.lat, loc.lng], { 
+                icon: iconDestino 
+            })
+            .addTo(map)
+            .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}<br><small>Ponto ${index + 1} de ${locais.length}</small>`);
         });
 
         // ------------------------------
-        // FUNÇÕES DE DISTÂNCIA
+        // FUNÇÕES DE ROTEAMENTO
         // ------------------------------
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI/180;
-            const dLon = (lon2 - lon1) * Math.PI/180;
-
-            const a =
-                Math.sin(dLat/2) ** 2 +
-                Math.cos(lat1 * Math.PI/180) *
-                Math.cos(lat2 * Math.PI/180) *
-                Math.sin(dLon/2) ** 2;
-
-            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))) * 1000; // metros
+        async function calcularRotaOSRM(pontos) {
+            if (pontos.length < 2) return null;
+            
+            const coordinates = pontos.map(p => `${p[1]},${p[0]}`).join(';');
+            const url = `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson`;
+            
+            try {
+                loadingIndicator.style.display = 'block';
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.routes && data.routes.length > 0) {
+                    return data.routes[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Erro ao calcular rota:', error);
+                return null;
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
         }
 
-        // Ordenar locais pela distância do usuário
-        function ordenarLocais(lat, lng) {
-            locais.sort((a, b) => {
-                const distA = getDistance(lat, lng, a.lat, a.lng);
-                const distB = getDistance(lat, lng, b.lat, b.lng);
-                return distA - distB;
+        function desenharRota(rotaData) {
+            if (currentRoute) {
+                map.removeLayer(currentRoute);
+            }
+            
+            if (rotaData && rotaData.geometry) {
+                const routeCoordinates = rotaData.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                
+                currentRoute = L.polyline(routeCoordinates, {
+                    color: '#A20E0E',
+                    weight: 6,
+                    opacity: 0.7,
+                    lineJoin: 'round'
+                }).addTo(map);
+                
+                map.fitBounds(currentRoute.getBounds());
+                
+                // Indicar que rota está ativa
+                isRouteActive = true;
+                routeControls.classList.add('route-active');
+                
+                return rotaData.distance;
+            }
+            return null;
+        }
+
+        async function calcularRotaProximoPonto() {
+            if (!userLat || !userLng || atual >= locais.length) return;
+            
+            const destino = locais[atual];
+            const pontos = [
+                [userLat, userLng],
+                [destino.lat, destino.lng]
+            ];
+            
+            const rota = await calcularRotaOSRM(pontos);
+            if (rota) {
+                const distancia = rota.distance;
+                desenharRota(rota);
+                return distancia;
+            }
+            return null;
+        }
+
+        async function calcularRotaCompleta() {
+            if (!userLat || !userLng || locais.length === 0) return;
+            
+            const pontos = [[userLat, userLng]];
+            locais.forEach(local => {
+                pontos.push([local.lat, local.lng]);
             });
+            
+            const rota = await calcularRotaOSRM(pontos);
+            if (rota) {
+                desenharRota(rota);
+                return rota.distance;
+            }
+            return null;
+        }
 
-            // Atualizar marcadores conforme nova ordem
-            markers.forEach(m => map.removeLayer(m));
-            markers = locais.map(loc =>
-                L.marker([loc.lat, loc.lng], { icon: iconDestino })
-                    .addTo(map)
-                    .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}`)
-            );
-
-            // Atualizar o modal após ordenar
-            atualizarModalPontos();
+        function limparRotas() {
+            if (currentRoute) {
+                map.removeLayer(currentRoute);
+                currentRoute = null;
+            }
+            isRouteActive = false;
+            routeControls.classList.remove('route-active');
         }
 
         // ------------------------------
-        // DESENHAR ROTA ENTRE OS LOCAIS
+        // FUNÇÕES DE PROGRESSO E NAVEGAÇÃO
         // ------------------------------
-        let rotaPolyline = null;
-
-        function desenharRota() {
-            if (rotaPolyline) map.removeLayer(rotaPolyline);
-
-            const coords = locais.map(l => [l.lat, l.lng]);
-
-            rotaPolyline = L.polyline(coords, {
-                color: "blue",
-                weight: 6,
-                opacity: 0.7
-            }).addTo(map);
-
-            map.fitBounds(rotaPolyline.getBounds());
+        function atualizarProgresso() {
+            const progresso = (concluidos.length / locais.length) * 100;
+            progressBar.style.width = `${progresso}%`;
+            routeProgressEl.textContent = `${concluidos.length}/${locais.length} pontos`;
+            statProgressEl.textContent = `${Math.round(progresso)}%`;
+            statPointsEl.textContent = `${concluidos.length}/${locais.length}`;
         }
 
-        // ------------------------------
-        // DESTINO ATUAL
-        // ------------------------------
         function atualizarDestino() {
             if (atual >= locais.length) {
-                destinoAtualEl.textContent = "Todos os locais concluídos! 🎉";
+                destinoAtualEl.textContent = "Rota concluída! 🎉";
                 distanciaAtualEl.textContent = "";
+                
+                setTimeout(() => {
+                    completionModal.style.display = 'block';
+                    overlay.style.display = 'block';
+                    gsap.fromTo(completionModal, 
+                        { scale: 0, opacity: 0 }, 
+                        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+                    );
+                }, 1000);
                 return;
             }
 
             destinoAtualEl.textContent = locais[atual].nome;
         }
-        atualizarDestino();
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI/180;
+            const dLon = (lon2 - lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))) * 1000;
+        }
 
         // ------------------------------
-        // FUNÇÕES DE FOCO
+        // EVENT LISTENERS
         // ------------------------------
-        function focarNoProximoPonto() {
+        btnCloseModal.addEventListener('click', () => {
+            completionModal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        btnMyLocation.addEventListener('click', () => {
+            if (userLat && userLng) {
+                map.setView([userLat, userLng], 16);
+            }
+        });
+
+        btnRouteView.addEventListener('click', () => {
+            if (locais.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        });
+
+        btnNextPoint.addEventListener('click', () => {
             if (atual < locais.length) {
                 const destino = locais[atual];
                 map.setView([destino.lat, destino.lng], 16);
                 markers[atual].openPopup();
             }
-        }
-
-        function focarEmTodosPontos() {
-            if (locais.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
-            }
-        }
-
-        function focarNaMinhaLocalizacao() {
-            if (userLat && userLng) {
-                map.setView([userLat, userLng], 16);
-            } else {
-                alert("Localização não disponível ainda.");
-            }
-        }
-
-        function focarNoPontoEspecifico(index) {
-            if (index >= 0 && index < locais.length) {
-                const local = locais[index];
-                map.setView([local.lat, local.lng], 16);
-                markers[index].openPopup();
-            }
-        }
-
-        // ------------------------------
-        // MODAL DE PONTOS SELECIONADOS
-        // ------------------------------
-        function atualizarModalPontos() {
-            pointsList.innerHTML = '';
-            
-            locais.forEach((local, index) => {
-                const pointItem = document.createElement('div');
-                pointItem.className = 'point-item';
-                pointItem.dataset.index = index;
-                
-                const pointInfo = document.createElement('div');
-                pointInfo.className = 'point-info';
-                
-                const pointName = document.createElement('div');
-                pointName.className = 'point-name';
-                pointName.textContent = local.nome;
-                
-                const pointDistance = document.createElement('div');
-                pointDistance.className = 'point-distance';
-
-                // Calcular distância se temos a localização do usuário
-                if (userLat && userLng) {
-                    const distancia = getDistance(userLat, userLng, local.lat, local.lng);
-                    pointDistance.textContent = `${(distancia/1000).toFixed(2)} km`;
-                } else {
-                    pointDistance.textContent = 'Calculando...';
-                }
-                
-                pointInfo.appendChild(pointName);
-                pointInfo.appendChild(pointDistance);
-                
-                const pointStatus = document.createElement('div');
-                pointStatus.className = 'point-status';
-                
-                // Determinar o status do ponto
-                if (concluídos.includes(local)) {
-                    pointStatus.textContent = 'Concluído';
-                    pointStatus.classList.add('status-completed');
-                } else if (index === atual) {
-                    pointStatus.textContent = 'Atual';
-                    pointStatus.classList.add('status-current');
-                } else {
-                    pointStatus.textContent = 'Pendente';
-                    pointStatus.classList.add('status-pending');
-                }
-                
-                pointItem.appendChild(pointInfo);
-                pointItem.appendChild(pointStatus);
-                pointsList.appendChild(pointItem);
-
-                // Adicionar evento de clique para focar no ponto específico
-                pointItem.addEventListener('click', () => {
-                    focarNoPontoEspecifico(index);
-                    pointsModal.style.display = 'none';
-                });
-            });
-        }
-
-        // ------------------------------
-        // CONTROLE DO MODAL
-        // ------------------------------
-        toggleModalBtn.addEventListener('click', () => {
-            if (pointsModal.style.display === 'block') {
-                pointsModal.style.display = 'none';
-            } else {
-                pointsModal.style.display = 'block';
-                atualizarModalPontos();
-            }
         });
 
-        closeModalBtn.addEventListener('click', () => {
-            pointsModal.style.display = 'none';
+        btnRouteNext.addEventListener('click', () => {
+            calcularRotaProximoPonto();
         });
 
-        // Fechar modal ao clicar fora dele
-        document.addEventListener('click', (event) => {
-            if (!pointsModal.contains(event.target) && event.target !== toggleModalBtn) {
-                pointsModal.style.display = 'none';
-            }
+        btnRouteAll.addEventListener('click', () => {
+            calcularRotaCompleta();
         });
 
-        // ------------------------------
-        // CONTROLE DO FOCO
-        // ------------------------------
-        focusBtn.addEventListener('click', () => {
-            if (focusOptions.style.display === 'block') {
-                focusOptions.style.display = 'none';
-            } else {
-                focusOptions.style.display = 'block';
-            }
-        });
-
-        focusNext.addEventListener('click', () => {
-            focarNoProximoPonto();
-            focusOptions.style.display = 'none';
-        });
-
-        focusAll.addEventListener('click', () => {
-            focarEmTodosPontos();
-            focusOptions.style.display = 'none';
-        });
-
-        focusUser.addEventListener('click', () => {
-            focarNaMinhaLocalizacao();
-            focusOptions.style.display = 'none';
-        });
-
-        // Fechar opções de foco ao clicar fora
-        document.addEventListener('click', (event) => {
-            if (!focusOptions.contains(event.target) && event.target !== focusBtn) {
-                focusOptions.style.display = 'none';
-            }
+        btnClearRoutes.addEventListener('click', () => {
+            limparRotas();
         });
 
         // ------------------------------
         // RASTREAMENTO DO USUÁRIO
         // ------------------------------
         let userMarker = null;
-        let primeiraLocalizacao = true;
-
+        
         navigator.geolocation.watchPosition(pos => {
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
 
-            // Atualizar posição do usuário
             if (!userMarker) {
                 userMarker = L.marker([userLat, userLng], { icon: iconUser }).addTo(map);
             } else {
                 userMarker.setLatLng([userLat, userLng]);
             }
 
-            // Ordena os locais somente na primeira localização
-            if (primeiraLocalizacao) {
-                ordenarLocais(userLat, userLng);
-                primeiraLocalizacao = false;
-            }
+            if (atual < locais.length) {
+                const destino = locais[atual];
+                const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
 
-            // Distância para o próximo ponto
-            const destino = locais[atual];
-            const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
+                distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
 
-            distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
+                if (dist < 80) {
+                    markers[atual].setIcon(iconConcluido);
+                    markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
+                    
+                    concluidos.push(destino);
+                    atual++;
+                    atualizarDestino();
+                    atualizarProgresso();
 
-            // Atualizar o modal com as distâncias atualizadas
-            atualizarModalPontos();
+                    gsap.fromTo(statusBox, { scale: 1 }, { 
+                        scale: 1.08, 
+                        duration: 0.3, 
+                        yoyo: true, 
+                        repeat: 1 
+                    });
 
-            // Se estiver perto, concluir
-            if (dist < 80) {
-                markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
-                concluídos.push(destino);
-                atual++;
-                atualizarDestino();
-
-                // Atualizar o modal após concluir um ponto
-                atualizarModalPontos();
-
-                // Efeito visual
-                gsap.fromTo(statusBox, { scale: 1 }, { scale: 1.08, duration: 0.3, yoyo: true, repeat: 1 });
+                    if (currentRoute) {
+                        calcularRotaProximoPonto();
+                    }
+                }
             }
 
         }, () => {
-            alert("Você precisa permitir o GPS para navegar pelos pontos turísticos.");
+            alert("Permita o acesso à localização para usar a navegação.");
         });
 
-        // Inicializar o modal
-        atualizarModalPontos();
+        // Inicializar
+        atualizarDestino();
+        atualizarProgresso();
     </script>
 </body>
 </html>
