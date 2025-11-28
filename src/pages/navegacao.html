@@ -79,8 +79,8 @@
         .route-info-panel {
             position: fixed;
             top: 20px;
-            right: 20px; /* Mudado para direita */
-            background: white;
+            right: 20px;
+            background: var(--BG);
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -144,7 +144,7 @@
 
         /* Controles de rota - agora parte dos controles principais */
         .route-controls {
-            background: white;
+            background: var(--BG);
             padding: 12px;
             border-radius: 12px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.2);
@@ -174,7 +174,7 @@
         .nav-controls {
             display: flex;
             gap: 10px;
-            background: white;
+            background: var(--BG);
             padding: 12px;
             border-radius: 12px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.2);
@@ -406,25 +406,25 @@
             { 
                 nome: "Lago do Cabrina", 
                 descricao: "Cartão postal de Londrina, ótimo para caminhadas.", 
-                lat: -23.269128522844692,  // Coordenada corrigida - Zona Norte
+                lat: -23.269128522844692,
                 lng: -51.1487427778922
             },
             { 
                 nome: "Sorvete Italiano ZN", 
                 descricao: "Os melhores sorvetes artesanais da cidade.", 
-                lat: -23.258567511423728,  // Coordenada corrigida - Zona Norte  
+                lat: -23.258567511423728,
                 lng: -51.14835159087403
             },
             { 
                 nome: "Centro Cultural Lupércio Luppi", 
                 descricao: "Exposições e eventos culturais diversos.", 
-                lat: -23.258247188716833,  // Coordenada corrigida - Zona Norte
+                lat: -23.258247188716833,
                 lng: -51.14500494963125
             },
             { 
                 nome: "Delika", 
                 descricao: "Culinária contemporânea em ambiente sofisticado.", 
-                lat: -23.259513800830575,  // Coordenada corrigida - Zona Norte
+                lat: -23.259513800830575,
                 lng: -51.145391187723135
             },
             { 
@@ -507,7 +507,7 @@
         }
 
         // Criar mapa - View corrigida para Zona Norte de Londrina
-        const map = L.map('map').setView([-23.304, -51.165], 15); // Zoom aumentado para 15
+        const map = L.map('map').setView([-23.304, -51.165], 15);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
@@ -618,7 +618,12 @@
             
             const rota = await calcularRotaOSRM(pontos);
             if (rota) {
+                const distanciaTotal = (rota.distance / 1000).toFixed(1);
                 desenharRota(rota);
+                
+                // Atualizar estatísticas com a distância real calculada
+                statDistanceEl.textContent = `${distanciaTotal} km`;
+                
                 return rota.distance;
             }
             return null;
@@ -725,7 +730,7 @@
 
             // Primeiro obtém a localização atual
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
                     userLat = position.coords.latitude;
                     userLng = position.coords.longitude;
                     
@@ -740,12 +745,22 @@
                         .bindPopup("<b>Sua localização</b>")
                         .openPopup();
                     }
+
+                    // NOVO: Calcular rota completa automaticamente ao iniciar
+                    setTimeout(() => {
+                        calcularRotaCompleta();
+                    }, 1000);
                 },
                 (error) => {
                     console.warn("Erro ao obter localização:", error);
                     // Usar coordenadas padrão da Zona Norte de Londrina
                     userLat = -23.304;
                     userLng = -51.165;
+                    
+                    // NOVO: Calcular rota completa mesmo sem localização do usuário
+                    setTimeout(() => {
+                        calcularRotaCompleta();
+                    }, 1000);
                 },
                 {
                     enableHighAccuracy: true,
@@ -805,10 +820,22 @@
             );
         }
 
-        // Inicializar
+        // ------------------------------
+        // INICIALIZAÇÃO - COM ROTA COMPLETA COMO PADRÃO
+        // ------------------------------
+        
+        // Inicializar geolocalização E calcular rota completa automaticamente
         initGeolocation();
         atualizarDestino();
         atualizarProgresso();
+
+        // NOVO: Mostrar mensagem de que a rota está sendo calculada
+        setTimeout(() => {
+            if (!isRouteActive) {
+                loadingIndicator.style.display = 'block';
+                loadingIndicator.textContent = "Calculando rota completa...";
+            }
+        }, 500);
 
         // Debug: Mostrar coordenadas no console
         console.log("Pontos turísticos carregados:");
