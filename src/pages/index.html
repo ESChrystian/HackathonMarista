@@ -16,25 +16,38 @@
     <div class="video-background">
         <video autoplay muted loop playsinline id="bgVideo">
             <source src="/public/images/1992.mp4" type="video/mp4">
-            <!-- Fallback para caso o vídeo não carregue -->
             Seu navegador não suporta vídeos HTML5.
         </video>
         <div class="video-overlay"></div>
     </div>
 
+    <!-- Header Mobile -->
+    <header class="mobile-header">
+        <div class="header-content">
+            <img src="/public/images/Logo.png" alt="Logo" class="mobile-logo">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
     <section class="tittle">
-        <h1>escolha</h1>
+        <h1>Escolha</h1>
         <h2>sua</h2>
         <h3>região</h3>
+        <img src="/public/images/Logo.png" alt="" width="500px" class="desktop-logo">
     </section>
     
     <div class="screen">
-        <div class="left-panel" id="leftPanel">
+        <!-- Painel Lateral (Desktop) / Bottom Sheet (Mobile) -->
+        <div class="left-panel mobile-panel" id="leftPanel">
+            <button class="close-panel" id="closePanel">×</button>
             <h2>Z</h2>
             <h3>N</h3>
             <img id="previewImage" src="" alt="">
             <p class="historia">A Zona Norte de Londrina começou a crescer de verdade nos <b>anos 1970</b>, quando a cidade se expandiu e foram criados vários loteamentos populares. A região, antes rural, virou um grande polo residencial, recebendo muitos trabalhadores e famílias. Com o tempo, surgiram bairros importantes como o <b>Vivi Xavier</b>,<b>Heimtal</b> e <b>Vila Nova</b>. Hoje é a área mais populosa da cidade, com comércio forte e muita infraestrutura.</p>
-            <p></p>
             <a href="/src/pages/locais.html">
                 <button class="pushable">
                     <span class="shadow"></span>
@@ -52,10 +65,7 @@
                 <div class="regiao oeste">Zona Oeste</div>
                 <div class="regiao centro">Centro</div>
             </div>
-            <!-- Mapa completo -->
             <img src="/public/images/mapa completo 1.png" class="map-base">
-
-            <!-- Área clicável da região norte -->
             <div id="hitboxNorte" class="hitbox"></div>
         </div>
     </div>
