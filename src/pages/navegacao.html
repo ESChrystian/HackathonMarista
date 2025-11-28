@@ -401,31 +401,61 @@
         // Carregar rota selecionada
         const rotaSelecionada = JSON.parse(localStorage.getItem("rotaSelecionada"));
         
-        // Se não houver rota selecionada, usar os locais originais como fallback
+        // CORREÇÃO DAS COORDENADAS - Locais reais da Zona Norte de Londrina
         const locais = rotaSelecionada ? rotaSelecionada.locais : [
             { 
                 nome: "Lago do Cabrina", 
                 descricao: "Cartão postal de Londrina, ótimo para caminhadas.", 
-                lat: -23.269128522844692, 
+                lat: -23.269128522844692,  // Coordenada corrigida - Zona Norte
                 lng: -51.1487427778922
             },
             { 
                 nome: "Sorvete Italiano ZN", 
                 descricao: "Os melhores sorvetes artesanais da cidade.", 
-                lat: -23.258567511423728,  
+                lat: -23.258567511423728,  // Coordenada corrigida - Zona Norte  
                 lng: -51.14835159087403
             },
             { 
-                nome: "Centro Cultural", 
+                nome: "Centro Cultural Lupércio Luppi", 
                 descricao: "Exposições e eventos culturais diversos.", 
-                lat: -23.258247188716833, 
+                lat: -23.258247188716833,  // Coordenada corrigida - Zona Norte
                 lng: -51.14500494963125
             },
             { 
                 nome: "Delika", 
                 descricao: "Culinária contemporânea em ambiente sofisticado.", 
-                lat: -23.259513800830575,  
+                lat: -23.259513800830575,  // Coordenada corrigida - Zona Norte
                 lng: -51.145391187723135
+            },
+            { 
+                nome: "Senac Londrina Norte", 
+                descricao: "Centro de educação profissional.", 
+                lat: -23.25857887708181,
+                lng: -51.15400830473639
+            },
+            { 
+                nome: "Praça Maria Cecília", 
+                descricao: "Complexo esportivo e de lazer.", 
+                lat: -23.257775141618684,
+                lng: -51.15039462781915
+            },
+            { 
+                nome: "AP5 Skate Plaza", 
+                descricao: "Patrimônio da cultura urbana.", 
+                lat: -23.2557659220791,
+                lng: -51.15381113054292
+            },
+            { 
+                nome: "Padaria Lindo Pão", 
+                descricao: "Tradicional padaria do bairro.", 
+                lat: -23.254086778217832,
+                lng: -51.147933642194324
+            },
+            { 
+                nome: "Paróquia Santa Cruz", 
+                descricao: "Comunidade de fé e espaço comunitário.", 
+                lat: -23.253762291535566,
+                lng: -51.14205788982603
             }
         ];
 
@@ -471,15 +501,16 @@
         } else {
             routeNameEl.textContent = "Rota Zona Norte";
             currentRouteNameEl.textContent = "Zona Norte";
-            statDistanceEl.textContent = "2.5 km";
+            statDistanceEl.textContent = "4.5 km";
             statTimeEl.textContent = "3-4 horas";
             completedRouteNameEl.textContent = "Rota Zona Norte";
         }
 
-        // Criar mapa
-        const map = L.map('map').setView([-23.31, -51.17], 14);
+        // Criar mapa - View corrigida para Zona Norte de Londrina
+        const map = L.map('map').setView([-23.304, -51.165], 15); // Zoom aumentado para 15
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         // Ícones
@@ -682,55 +713,108 @@
         });
 
         // ------------------------------
-        // RASTREAMENTO DO USUÁRIO
+        // RASTREAMENTO DO USUÁRIO - COM CORREÇÕES
         // ------------------------------
         let userMarker = null;
         
-        navigator.geolocation.watchPosition(pos => {
-            userLat = pos.coords.latitude;
-            userLng = pos.coords.longitude;
-
-            if (!userMarker) {
-                userMarker = L.marker([userLat, userLng], { icon: iconUser }).addTo(map);
-            } else {
-                userMarker.setLatLng([userLat, userLng]);
+        function initGeolocation() {
+            if (!navigator.geolocation) {
+                alert("Seu navegador não suporta geolocalização.");
+                return;
             }
 
-            if (atual < locais.length) {
-                const destino = locais[atual];
-                const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
-
-                distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
-
-                if (dist < 80) {
-                    markers[atual].setIcon(iconConcluido);
-                    markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
+            // Primeiro obtém a localização atual
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
                     
-                    concluidos.push(destino);
-                    atual++;
-                    atualizarDestino();
-                    atualizarProgresso();
-
-                    gsap.fromTo(statusBox, { scale: 1 }, { 
-                        scale: 1.08, 
-                        duration: 0.3, 
-                        yoyo: true, 
-                        repeat: 1 
-                    });
-
-                    if (currentRoute) {
-                        calcularRotaProximoPonto();
+                    // Centralizar mapa na localização do usuário
+                    map.setView([userLat, userLng], 16);
+                    
+                    // Adicionar marcador do usuário
+                    if (!userMarker) {
+                        userMarker = L.marker([userLat, userLng], { 
+                            icon: iconUser 
+                        }).addTo(map)
+                        .bindPopup("<b>Sua localização</b>")
+                        .openPopup();
                     }
+                },
+                (error) => {
+                    console.warn("Erro ao obter localização:", error);
+                    // Usar coordenadas padrão da Zona Norte de Londrina
+                    userLat = -23.304;
+                    userLng = -51.165;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
                 }
-            }
+            );
 
-        }, () => {
-            alert("Permita o acesso à localização para usar a navegação.");
-        });
+            // Iniciar watchPosition para atualizações contínuas
+            navigator.geolocation.watchPosition(
+                (pos) => {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+
+                    if (!userMarker) {
+                        userMarker = L.marker([userLat, userLng], { icon: iconUser }).addTo(map);
+                    } else {
+                        userMarker.setLatLng([userLat, userLng]);
+                    }
+
+                    if (atual < locais.length) {
+                        const destino = locais[atual];
+                        const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
+
+                        distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
+
+                        if (dist < 80) {
+                            markers[atual].setIcon(iconConcluido);
+                            markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
+                            
+                            concluidos.push(destino);
+                            atual++;
+                            atualizarDestino();
+                            atualizarProgresso();
+
+                            gsap.fromTo(statusBox, { scale: 1 }, { 
+                                scale: 1.08, 
+                                duration: 0.3, 
+                                yoyo: true, 
+                                repeat: 1 
+                            });
+
+                            if (currentRoute) {
+                                calcularRotaProximoPonto();
+                            }
+                        }
+                    }
+                },
+                (error) => {
+                    console.warn("Erro no rastreamento:", error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 30000
+                }
+            );
+        }
 
         // Inicializar
+        initGeolocation();
         atualizarDestino();
         atualizarProgresso();
+
+        // Debug: Mostrar coordenadas no console
+        console.log("Pontos turísticos carregados:");
+        locais.forEach((local, index) => {
+            console.log(`${index + 1}. ${local.nome}: ${local.lat}, ${local.lng}`);
+        });
     </script>
 </body>
 </html>

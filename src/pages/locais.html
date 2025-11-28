@@ -155,6 +155,7 @@
 
     .point-item {
       display: flex;
+      flex-direction: column;
       gap: 20px;
       padding: 15px;
       background: rgba(255, 255, 255, 0.8);
@@ -162,9 +163,13 @@
       border-left: 4px solid var(--terceari);
     }
 
+    point-img-container {
+      width: 100%;
+    }
+
     .point-image {
-      width: 120px;
-      height: 90px;
+      width: 100%;
+      height: 100%;
       border-radius: 8px;
       object-fit: cover;
       flex-shrink: 0;
@@ -270,7 +275,7 @@
 
     <div class="selection-status" id="selectionStatus">Nenhuma rota selecionada</div>
     <button id="showDetails" class="show-details-btn" style="display: none;">
-      📖 Ver Detalhes da Rota
+      Ver Detalhes da Rota
     </button>
   </header>
 
@@ -303,7 +308,7 @@
       <p>Preparando sua rota turística...</p>
     </div>
   </div>
-
+  <img src="" alt="">
   <script>
     // == Dados das Rotas Pré-definidas ==
     const rotas = [
@@ -311,31 +316,31 @@
         id: "rota-classica",
         nome: "Rota Clássica Zona Norte",
         descricao: "Os pontos mais icônicos e populares da região norte de Londrina",
-        tema: "⭐ Clássico",
+        tema: "Clássico",
         locais: [
           {
             nome: "Lago do Cabrina",
             descricao: "Cartão postal de Londrina, ótimo para caminhadas.",
-            historia: "Inaugurado em 1978, o Lago do Cabrina se tornou um dos principais pontos de encontro da cidade. Com área de 45 mil m², foi revitalizado em 2015 e hoje abriga diversas espécies de aves aquáticas.",
+            historia: "A história do Lago Cabrinha — um espaço que marcou a zona norte de Londrina e continua, até hoje, fazendo parte do cotidiano de muita gente. O Lago Cabrinha nasceu no início dos anos 2000, quando a cidade decidiu transformar a área de fundo de vale do Córrego Cabrinha em um local de convivência, natureza e lazer. Em 2004, o complexo foi inaugurado: dois lagos, pista de caminhada, áreas verdes e um ambiente pensado justamente para oferecer qualidade de vida a uma região que carecia de espaços públicos assim. Por um bom tempo, tornou-se ponto de encontro de famílias, crianças, caminhantes e moradores da região. <br> Com o passar dos anos, porém, o lago começou a enfrentar dificuldades. A barragem sofreu desgaste e passou a apresentar vazamentos, diminuindo o nível da água. A nascente, em momentos de abandono, acumulou lixo, sedimentos e sinais de degradação. O assoreamento aumentou, a vegetação sofreu, e períodos de estiagem deixaram ainda mais visíveis os problemas que se acumularam.Apesar disso, o Lago Cabrinha não foi esquecido. Nos últimos anos, recebeu projetos de revitalização, novos equipamentos urbanos e até o famoso letreiro “Eu Amo Londrina”, que reforçou seu papel como cartão-postal da zona norte. Ainda assim, é um espaço que precisa de cuidados constantes e de obras estruturais importantes para recuperar sua vitalidade completa. Hoje, o Lago Cabrinha continua sendo um símbolo: de lazer, de comunidade, de desafios e de esperança de que os espaços públicos da cidade possam ser sempre valorizados. Ele carrega, ao mesmo tempo, a memória da transformação e a expectativa de um futuro melhor.",
             lat: -23.269128522844692,
             lng: -51.1487427778922,
-            img: "https://source.unsplash.com/collection/190727/800x600?lake"
+            img: "/public/images/cabrinha.jpg"
           },
           {
             nome: "Sorvete Italiano ZN",
             descricao: "Os melhores sorvetes artesanais da cidade.",
-            historia: "Fundado em 1985 pela família Bianchi, imigrantes italianos que trouxeram receitas tradicionais do norte da Itália. Tornou-se referência em sorvetes artesanais usando frutas locais.",
+            historia: "A sorveteria italiana Palaco foi fundada no ano de 1993, sendo um ponto tradicional da região. Frequentemente elogiada por seus sabores e qualidade, está na memória afetiva de muitos de seus frequentadores. É um dos melhores locais e mais clássicos, estando em telelistas antigas da época.    ",
             lat: -23.258567511423728,
             lng: -51.14835159087403,
-            img: "https://source.unsplash.com/featured/?icecream,shop"
+            img: "/public/images/sorveteriaItaliano.jpg"
           },
           {
             nome: "Centro Cultural",
             descricao: "Exposições e eventos culturais diversos.",
-            historia: "Instalado em um prédio histórico de 1930 que foi a primeira escola pública da região. Restaurado em 2001, hoje abriga mostras de artistas locais e nacionais.",
+            historia: "a história do Centro Cultural da Região Norte – Lupércio Luppi, importante referência cultural da zona norte de Londrina. O Centro Cultural surgiu a partir da inauguração da Biblioteca Pública Municipal Lupércio Luppi, em 26 de junho de 2004, instalada em um antigo supermercado reformado. Desde então, tornou-se um espaço fundamental para levar cultura, leitura e atividades educativas aos moradores da região, contribuindo para a descentralização dos equipamentos culturais da cidade. Ao longo dos anos, ampliou suas funções, passando a oferecer teatro, oficinas, exposições, eventos comunitários e diversas ações voltadas à arte, educação e convivência. Assim, o Centro Cultural consolidou-se como um local de encontro, aprendizado e inclusão social, valorizando a produção cultural local e fortalecendo a comunidade. Atualmente, é reconhecido como um importante patrimônio da região norte, promovendo acesso à cultura e oportunidades para todas as idades.",
             lat: -23.258247188716833,
             lng: -51.14500494963125,
-            img: "https://source.unsplash.com/featured/?art,gallery"
+            img: "/public/images/CentroCultural.jpg"
           },
           {
             nome: "Delika",
@@ -343,7 +348,7 @@
             historia: "Inaugurado em 2010 pelo chef Marcelo Dias, o Delika revolucionou a gastronomia local com pratos que misturam ingredientes regionais e técnicas internacionais.",
             lat: -23.259513800830575,
             lng: -51.145391187723135,
-            img: "https://source.unsplash.com/featured/?restaurant,food"
+            img: "/public/images/delika.jpg"
           }
         ],
         distancia: "2.5 km",
@@ -351,77 +356,57 @@
         dificuldade: "Fácil",
         img: "https://source.unsplash.com/featured/?city,landmark"
       },
-      {
-        id: "rota-natureza",
-        nome: "Trilha Natural",
-        descricao: "Explore os pontos verdes e áreas naturais de Londrina",
-        tema: "🌿 Natureza",
+        {
+        id: "rota-comunidade-ativa",
+        nome: "Rota da Comunidade Ativa: Norte de Londrina",
+        descricao: "Uma jornada pela educação, esporte, fé e convivência que fortalecem os laços comunitários da zona norte",
+        tema: "🤝 Comunidade",
         locais: [
           {
-            nome: "Lago do Cabrina",
-            descricao: "Cartão postal de Londrina, ótimo para caminhadas.",
-            historia: "Inaugurado em 1978, o Lago do Cabrina se tornou um dos principais pontos de encontro da cidade. Com área de 45 mil m², foi revitalizado em 2015 e hoje abriga diversas espécies de aves aquáticas.",
-            lat: -23.269128522844692,
-            lng: -51.1487427778922,
-            img: "https://source.unsplash.com/collection/190727/800x600?lake"
+            nome: "Senac Londrina Norte",
+            descricao: "Centro de educação profissional com capacidade para mais de mil alunos diários",
+            historia: "Criado formalmente em 2012 como parte da expansão do SENAC Paraná, a unidade teve sua sede construída em terreno doado pela Prefeitura de Londrina em 2011. Inaugurado oficialmente em 3 de fevereiro de 2017, o campus possui mais de 2.600 m² e oferece cursos nas áreas de saúde, beleza, informática, gestão e gastronomia, atuando como espaço de formação profissional e integração com a comunidade local.",
+            lat: -23.25857887708181,
+            lng: -51.15400830473639,
+            img: "/public/images/senacLondrinaNorte.png"
           },
           {
-            nome: "Parque Ecológico",
-            descricao: "Área de preservação com trilhas e mirantes.",
-            historia: "Criado em 1992 como reserva ambiental, o parque possui 120 hectares de mata nativa e 12km de trilhas. Abriga mais de 150 espécies de animais silvestres.",
-            lat: -23.258567511423728,
-            lng: -51.14835159087403,
-            img: "https://source.unsplash.com/featured/?forest,londrina"
+            nome: "Praça Maria Cecília",
+            descricao: "Complexo esportivo e de lazer com diversas atividades comunitárias",
+            historia: "Localizada no Conjunto Maria Cecília, o espaço passou por anos de abandono até ser revitalizado a partir de 2020. As obras transformaram a área em uma praça moderna com campo de futebol sintético, pista de caminhada, parquinho infantil, espaço para pets e ginásio poliesportivo renovado. Hoje oferece atividades como futsal, vôlei, taekwondo e natação, promovendo saúde e integração entre moradores.",
+            lat: -23.257775141618684,
+            lng: -51.15039462781915,
+            img: "/public/images/pracaMariaCecilia.png"
           },
           {
-            nome: "Jardim Botânico",
-            descricao: "Diversidade de espécies da flora local.",
-            historia: "Inaugurado em 2005, o jardim possui coleção de mais de 800 espécies da flora brasileira, com destaque para orquídeas nativas e plantas medicinais tradicionais.",
-            lat: -23.258247188716833,
-            lng: -51.14500494963125,
-            img: "https://source.unsplash.com/featured/?garden"
+            nome: "AP5 Skate Plaza",
+            descricao: "Patrimônio da cultura urbana e ponto de encontro de skatistas",
+            historia: "Fundada em 1995 por skatistas locais, a AP5 Skate Plaza se consolidou como um dos principais pontos de prática de skate da região. Funcionando como espaço público 24 horas sem cobrança de entrada, tornou-se referência para aprendizado e prática do esporte, fortalecendo a identidade comunitária e estimulando valores como persistência e convivência entre gerações.",
+            lat: -23.2557659220791,
+            lng: -51.15381113054292,
+            img: "/public/images/ap5SkatePlaza.jpg"
+          },
+          {
+            nome: "Padaria Lindo Pão",
+            descricao: "Tradicional estabelecimento comercial e ponto de convivência do bairro",
+            historia: "Fundada em 16 de agosto de 2000 no bairro Aquilles Stengel, a Lindo Pão se consolidou como referência local através da qualidade de seus produtos de panificação e confeitaria. Mais do que um ponto comercial, tornou-se espaço de convivência e tradição, sendo parte da memória afetiva da comunidade e ponto de encontro para moradores da região.",
+            lat: -23.254086778217832,
+            lng: -51.147933642194324,
+            img: "/public/images/lindopao.jpg"
+          },
+          {
+            nome: "Paróquia Santa Cruz",
+            descricao: "Comunidade de fé e espaço de acolhimento espiritual",
+            historia: "A história da comunidade remonta ao final da década de 1970, quando famílias começaram a se reunir em casas e depois em um barracão da prefeitura. A primeira missa solene ocorreu em 1º de abril de 1980, e em 26 de janeiro de 1996 a Paróquia Santa Cruz foi oficialmente criada por decreto da Arquidiocese. Desde então, atua como espaço de culto e encontro comunitário, oferecendo celebrações e atividades pastorais.",
+            lat: -23.253762291535566,
+            lng: -51.14205788982603,
+            img: "/public/images/paroquiaSantaCruz.avif"
           }
         ],
-        distancia: "3.2 km",
-        duracao: "2-3 horas",
-        dificuldade: "Fácil",
-        img: "https://source.unsplash.com/featured/?nature,park"
-      },
-      {
-        id: "rota-gastronomica",
-        nome: "Tour Gastronômico",
-        descricao: "Saboreie os melhores pratos da região norte",
-        tema: "🍴 Gastronomia",
-        locais: [
-          {
-            nome: "Sorvete Italiano ZN",
-            descricao: "Os melhores sorvetes artesanais.",
-            historia: "Fundado em 1985 pela família Bianchi, imigrantes italianos que trouxeram receitas tradicionais do norte da Itália. Tornou-se referência em sorvetes artesanais usando frutas locais.",
-            lat: -23.259513800830575,
-            lng: -51.145391187723135,
-            img: "https://source.unsplash.com/featured/?icecream"
-          },
-          {
-            nome: "Delika",
-            descricao: "Culinária contemporânea em ambiente sofisticado.",
-            historia: "Inaugurado em 2010 pelo chef Marcelo Dias, o Delika revolucionou a gastronomia local com pratos que misturam ingredientes regionais e técnicas internacionais.",
-            lat: -23.262,
-            lng: -51.152,
-            img: "https://source.unsplash.com/featured/?restaurant,food"
-          },
-          {
-            nome: "Mercado Municipal",
-            descricao: "Produtos regionais e comidas típicas.",
-            historia: "Construído em 1954, o mercado é patrimônio histórico da cidade. Reúne produtores rurais da região e oferece desde frutas tropicais até pratos típicos da culinária paranaense.",
-            lat: -23.265,
-            lng: -51.148,
-            img: "https://source.unsplash.com/featured/?market,food"
-          }
-        ],
-        distancia: "2.8 km",
+        distancia: "4.5 km",
         duracao: "3-4 horas",
         dificuldade: "Fácil",
-        img: "https://source.unsplash.com/featured/?food,gourmet"
+        img: "https://source.unsplash.com/featured/?community,londrina"
       }
     ];
 
@@ -526,7 +511,9 @@
         const pointItem = document.createElement('div');
         pointItem.className = 'point-item';
         pointItem.innerHTML = `
-          <img src="${ponto.img}" alt="${ponto.nome}" class="point-image">
+        <div class="point-image-container">
+           <img src="${ponto.img}" alt="${ponto.nome}" class="point-image">
+        </div>
           <div class="point-info">
             <div class="point-name">${index + 1}. ${ponto.nome}</div>
             <div class="point-description">${ponto.descricao}</div>
