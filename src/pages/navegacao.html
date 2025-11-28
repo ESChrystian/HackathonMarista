@@ -276,6 +276,17 @@
             border-left: 4px solid var(--primari);
         }
 
+        /* Estilos para alertas de geolocalização */
+        .geolocation-alert {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .leaflet-popup-content {
+            font-family: Arial, sans-serif;
+        }
+
         /* Responsividade */
         @media (max-width: 768px) {
             .main-controls {
@@ -435,6 +446,8 @@
         let userLng = null;
         let currentRoute = null;
         let isRouteActive = false;
+        let userMarker = null;
+        let watchId = null;
 
         // Elementos da interface
         const statusBox = document.getElementById("statusBox");
@@ -477,7 +490,7 @@
         }
 
         // Criar mapa
-        const map = L.map('map').setView([-23.31, -51.17], 14);
+        const map = L.map('map').setView([-23.310, -51.162], 14);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19
         }).addTo(map);
@@ -495,10 +508,11 @@
 
         const iconUser = L.icon({
             iconUrl: "https://cdn-icons-png.flaticon.com/512/428/428933.png",
-            iconSize: [40, 40]
+            iconSize: [40, 40],
+            iconAnchor: [20, 40]
         });
 
-        // Criar marcadores
+        // Criar marcadores dos pontos turísticos
         let markers = locais.map((loc, index) => {
             return L.marker([loc.lat, loc.lng], { 
                 icon: iconDestino 
@@ -506,6 +520,164 @@
             .addTo(map)
             .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}<br><small>Ponto ${index + 1} de ${locais.length}</small>`);
         });
+
+        // ------------------------------
+        // FUNÇÕES DE GEOLOCALIZAÇÃO
+        // ------------------------------
+        function initGeolocation() {
+            if (!navigator.geolocation) {
+                showGeolocationError("Seu navegador não suporta geolocalização.");
+                return;
+            }
+
+            // Primeiro obtém a localização atual
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    handleLocationSuccess(position);
+                },
+                (error) => {
+                    handleLocationError(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+
+            // Depois inicia o watchPosition para atualizações contínuas
+            startWatchingLocation();
+        }
+
+        function handleLocationSuccess(position) {
+            userLat = position.coords.latitude;
+            userLng = position.coords.longitude;
+            
+            console.log("Localização obtida:", userLat, userLng);
+            
+            // Centralizar mapa na localização do usuário
+            map.setView([userLat, userLng], 16);
+            
+            // Adicionar/atualizar marcador do usuário
+            if (!userMarker) {
+                userMarker = L.marker([userLat, userLng], { 
+                    icon: iconUser,
+                    zIndexOffset: 1000 
+                }).addTo(map)
+                .bindPopup("<b>Sua localização</b>")
+                .openPopup();
+            } else {
+                userMarker.setLatLng([userLat, userLng]);
+            }
+        }
+
+        function handleLocationError(error) {
+            console.warn("Erro de geolocalização:", error);
+            
+            let errorMsg = "Não foi possível obter sua localização. ";
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMsg += "Permissão negada. Por favor, permita o acesso à localização nas configurações do seu navegador.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMsg += "Localização indisponível. Verifique se o GPS está ativado.";
+                    break;
+                case error.TIMEOUT:
+                    errorMsg += "Tempo esgotado para obter localização.";
+                    break;
+                default:
+                    errorMsg += "Erro desconhecido.";
+                    break;
+            }
+            
+            showGeolocationError(errorMsg);
+            
+            // Usar coordenadas padrão de Londrina
+            userLat = -23.310;
+            userLng = -51.162;
+        }
+
+        function showGeolocationError(message) {
+            const alertDiv = L.DomUtil.create('div', 'geolocation-alert');
+            alertDiv.innerHTML = `
+                <div style="padding: 10px; background: #ffebee; border: 2px solid #f44336; border-radius: 5px; margin: 10px;">
+                    <strong>⚠️ Localização</strong><br>
+                    ${message}<br>
+                    <small>Usando localização padrão de Londrina.</small>
+                </div>
+            `;
+            
+            const alertControl = L.control({position: 'topright'});
+            alertControl.onAdd = function(map) {
+                return alertDiv;
+            };
+            alertControl.addTo(map);
+            
+            setTimeout(() => {
+                map.removeControl(alertControl);
+            }, 8000);
+        }
+
+        function startWatchingLocation() {
+            watchId = navigator.geolocation.watchPosition(
+                (pos) => {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+
+                    if (!userMarker) {
+                        userMarker = L.marker([userLat, userLng], { 
+                            icon: iconUser,
+                            zIndexOffset: 1000 
+                        }).addTo(map)
+                        .bindPopup("<b>Sua localização</b>");
+                    } else {
+                        userMarker.setLatLng([userLat, userLng]);
+                    }
+
+                    // Atualizar distância até o próximo ponto
+                    if (atual < locais.length) {
+                        const destino = locais[atual];
+                        const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
+
+                        distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
+
+                        // Verificar se chegou ao ponto (50 metros de tolerância)
+                        if (dist < 50) {
+                            markers[atual].setIcon(iconConcluido);
+                            markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
+                            
+                            concluidos.push(destino);
+                            atual++;
+                            atualizarDestino();
+                            atualizarProgresso();
+
+                            // Efeito visual
+                            gsap.fromTo(statusBox, { scale: 1 }, { 
+                                scale: 1.08, 
+                                duration: 0.3, 
+                                yoyo: true, 
+                                repeat: 1 
+                            });
+
+                            // Recalcular rota se estiver ativa
+                            if (currentRoute) {
+                                calcularRotaProximoPonto();
+                            }
+                        }
+                    }
+
+                },
+                (error) => {
+                    console.warn("Erro no rastreamento contínuo:", error);
+                    // Não mostrar alertas para não incomodar o usuário
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 30000
+                }
+            );
+        }
 
         // ------------------------------
         // FUNÇÕES DE ROTEAMENTO
@@ -651,6 +823,9 @@
         btnMyLocation.addEventListener('click', () => {
             if (userLat && userLng) {
                 map.setView([userLat, userLng], 16);
+                if (userMarker) {
+                    userMarker.openPopup();
+                }
             }
         });
 
@@ -682,55 +857,20 @@
         });
 
         // ------------------------------
-        // RASTREAMENTO DO USUÁRIO
+        // INICIALIZAÇÃO
         // ------------------------------
-        let userMarker = null;
-        
-        navigator.geolocation.watchPosition(pos => {
-            userLat = pos.coords.latitude;
-            userLng = pos.coords.longitude;
+        map.whenReady(initGeolocation);
 
-            if (!userMarker) {
-                userMarker = L.marker([userLat, userLng], { icon: iconUser }).addTo(map);
-            } else {
-                userMarker.setLatLng([userLat, userLng]);
-            }
-
-            if (atual < locais.length) {
-                const destino = locais[atual];
-                const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
-
-                distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
-
-                if (dist < 80) {
-                    markers[atual].setIcon(iconConcluido);
-                    markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
-                    
-                    concluidos.push(destino);
-                    atual++;
-                    atualizarDestino();
-                    atualizarProgresso();
-
-                    gsap.fromTo(statusBox, { scale: 1 }, { 
-                        scale: 1.08, 
-                        duration: 0.3, 
-                        yoyo: true, 
-                        repeat: 1 
-                    });
-
-                    if (currentRoute) {
-                        calcularRotaProximoPonto();
-                    }
-                }
-            }
-
-        }, () => {
-            alert("Permita o acesso à localização para usar a navegação.");
-        });
-
-        // Inicializar
+        // Inicializar interface
         atualizarDestino();
         atualizarProgresso();
+
+        // Cleanup ao sair da página
+        window.addEventListener('beforeunload', () => {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        });
     </script>
 </body>
 </html>
