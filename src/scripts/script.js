@@ -1,9 +1,9 @@
 // == Dados dos locais ==
 const locais = [
-    { nome: "Lago do Cabrina", descricao: "Cartão postal de Londrina, ótimo para caminhadas.", lat: -23.269128522844692, lng: -51.1487427778922, img: "https://source.unsplash.com/collection/190727/800x600?lake" },
+    { nome: "Lago do Cabrina", descricao: "O Lago do Cabrinha é um pequeno lago urbano da zona norte, usado para caminhadas e lazer ao ar livre.", lat: -23.269128522844692, lng: -51.1487427778922, img: "https://source.unsplash.com/collection/190727/800x600?lake" },
     { nome: "Sorvete Italiano ZN", descricao: "Parque ecológico com trilhas naturais.", lat: -23.258567511423728, lng:  -51.14835159087403, img: "https://source.unsplash.com/featured/?forest,londrina" },
     { nome: "Centro Cultural", descricao: "Natureza preservada e lindos cenários.", lat: -23.258247188716833, lng: -51.14500494963125, img: "https://source.unsplash.com/featured/?garden" },
-    { nome: "Delika", descricao: "Ponto central oficial da cidade.", lat: -23.259513800830575,  lng: -51.145391187723135, img: "https://source.unsplash.com/featured/?city" }
+    { nome: "Delika", descricao: "A Padaria Delika é uma padaria tradicional da zona norte, conhecida por pães frescos, doces caseiros e atendimento rápido.", lat: -23.259513800830575,  lng: -51.145391187723135, img: "https://source.unsplash.com/featured/?city" }
   ];
   
   const container = document.getElementById("cards-container");
