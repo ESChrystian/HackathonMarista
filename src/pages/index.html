@@ -12,41 +12,50 @@
 </head>
 
 <body>
+    <!-- Vídeo de background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline id="bgVideo">
+            <source src="/public/images/1992.mp4" type="video/mp4">
+            <!-- Fallback para caso o vídeo não carregue -->
+            Seu navegador não suporta vídeos HTML5.
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
     <section class="tittle">
         <h1>Selecione sua região de turismo desejada</h1>
     </section>
+    
     <div class="screen">
-
         <div class="left-panel" id="leftPanel">
             <img id="previewImage" src="" alt="">
-            <p>
-
-            </p>
+            <p class="historia">A Zona Norte de Londrina começou a crescer de verdade nos anos 1970, quando a cidade se expandiu e foram criados vários loteamentos populares. A região, antes rural, virou um grande polo residencial, recebendo muitos trabalhadores e famílias. Com o tempo, surgiram bairros importantes como o Vivi Xavier, Heimtal e Vila Nova. Hoje é a área mais populosa da cidade, com comércio forte e muita infraestrutura.</p>
+            <p></p>
             <a href="/src/pages/locais.html">
-                <!-- From Uiverse.io by kleenpulse -->
-                <button class="btn">Ver Pontos Turísticos</button>
-
+                <button class="pushable">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front">Ver Pontos Turísticos</span>
+                </button>
             </a>
         </div>
 
         <div class="map-container">
-
-            <p class="name1">zona norte</p>
-            <p class="name2">zona sul</p>
-            <p class="name3">zona leste</p>
-            <p class="name4">zona oeste</p>
-            <p class="name5">centro</p>
+            <div class="mapa">
+                <div class="regiao norte">Zona Norte</div>
+                <div class="regiao sul">Zona Sul</div>
+                <div class="regiao leste">Zona Leste</div>
+                <div class="regiao oeste">Zona Oeste</div>
+                <div class="regiao centro">Centro</div>
+            </div>
             <!-- Mapa completo -->
             <img src="/public/images/mapa completo 1.png" class="map-base">
 
             <!-- Área clicável da região norte -->
             <div id="hitboxNorte" class="hitbox"></div>
-
         </div>
-
     </div>
 
     <script src="/src/scripts/expandir.js"></script>
 </body>
-
 </html>
