@@ -192,7 +192,7 @@ opacity: 0.6;
 .map-container {
     position: relative;
     flex: 1;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: all 0.4s ease-in-out;
 }
 
 /* Quando o painel está aberto, move o mapa um pouco mais */
